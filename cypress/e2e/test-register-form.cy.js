@@ -55,7 +55,7 @@ describe('inscription échouée', () => {
   it('remplissage du formulaire sans le prénom et soumission', () => {
     cy.get('[data-qa="accept-cta"]').click()
     cy.get('#lastName').type(faker.name.lastName())
-    cy.get('#signup-email').type(faker.name.fullName())
+    cy.get('#signup-email').type(faker.internet.email())
     cy.get('#signup-password').type(faker.internet.password(8))
     cy.get('[data-qa="signup-submit-button"]').click()
     cy.url().then(actualUrl => {
@@ -65,7 +65,7 @@ describe('inscription échouée', () => {
   it('remplissage du formulaire sans le nom et soumission', () => {
     cy.get('[data-qa="accept-cta"]').click()
     cy.get('#firstName').type(faker.name.firstName())
-    cy.get('#signup-email').type(faker.name.fullName())
+    cy.get('#signup-email').type(faker.internet.email())
     cy.get('#signup-password').type(faker.internet.password(8))
     cy.get('[data-qa="signup-submit-button"]').click()
     cy.url().then(actualUrl => {
