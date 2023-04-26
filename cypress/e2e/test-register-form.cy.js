@@ -1,50 +1,75 @@
 /// <reference types="cypress" />
 
+import { faker } from '@faker-js/faker'
+
 describe('inscription réussie', () => {
-  // it('effacer les cookies', () => {
-  //   cy.clearCookies()
-  // })
-  it('visite du site web', () => {
+  beforeEach(() => {
+    cy.clearCookies()
     cy.visit('https://preprod.backmarket.fr/fr-fr/register')
   })
-
-  it('entre un prénom', () => {
-    cy.get('#firstName').type('Guy')
-  })
-  it('entre un nom', () => {
-    cy.get('#lastName').type('Teub')
-  })
-  it('entre une adresse email', () => {
-    cy.get('#signup-email').type('test@testeur2000.fr')
-  })
-  it('entre un mot de passe', () => {
-    cy.get('#signup-password').type('123456Azerty@')
-  })
-  it('clique sur le bouton submit', () => {
+  it('remplissage correct du formulaire et soumission', () => {
+    cy.get('[data-qa="accept-cta"]').click()
+    cy.get('#firstName').type(faker.name.firstName())
+    cy.get('#lastName').type(faker.name.lastName())
+    cy.get('#signup-email').type(faker.internet.email())
+    cy.get('#signup-password').type(
+      faker.internet.password(8, false, /[a-zA-Z0-9]/)
+    )
     cy.get('[data-qa="signup-submit-button"]').click()
+    cy.wait(5000)
+    cy.url().then(actualUrl => {
+      expect(actualUrl).to.include('/dashboard')
+    })
   })
 })
+
 describe('inscription échouée', () => {
-  // it('effacer les cookies', () => {
-  //   cy.clearCookies()
-  // })
-  it('visite du site web', () => {
+  beforeEach(() => {
+    cy.clearCookies()
     cy.visit('https://preprod.backmarket.fr/fr-fr/register')
   })
-
-  it('entre un prénom', () => {
-    cy.get('#firstName').type('Guy')
-  })
-  it('entre un nom', () => {
-    cy.get('#lastName').type('Teub')
-  })
-  it('entre une adresse email', () => {
-    cy.get('#signup-email').type('test@testeur2000.fr')
-  })
-  it('entre un mot de passe trop court', () => {
-    cy.get('#signup-password').type('abcde')
-  })
-  it('clique sur le bouton submit', () => {
+  it('remplissage du formulaire avec mot de passe trop court et soumission', () => {
+    cy.get('[data-qa="accept-cta"]').click()
+    cy.get('#firstName').type(faker.name.firstName())
+    cy.get('#lastName').type(faker.name.lastName())
+    cy.get('#signup-email').type(faker.internet.email())
+    cy.get('#signup-password').type(faker.internet.password(7))
     cy.get('[data-qa="signup-submit-button"]').click()
+    cy.url().then(actualUrl => {
+      expect(actualUrl).to.include('/register')
+    })
+  })
+  it('remplissage du formulaire avec email invalide et soumission', () => {
+    cy.get('[data-qa="accept-cta"]').click()
+    cy.get('#firstName').type(faker.name.firstName())
+    cy.get('#lastName').type(faker.name.lastName())
+    cy.get('#signup-email').type(faker.name.fullName())
+    cy.get('#signup-password').type(
+      faker.internet.password(8, false, /[a-zA-Z0-9]/)
+    )
+    cy.get('[data-qa="signup-submit-button"]').click()
+    cy.url().then(actualUrl => {
+      expect(actualUrl).to.include('/register')
+    })
+  })
+  it('remplissage du formulaire sans le prénom et soumission', () => {
+    cy.get('[data-qa="accept-cta"]').click()
+    cy.get('#lastName').type(faker.name.lastName())
+    cy.get('#signup-email').type(faker.name.fullName())
+    cy.get('#signup-password').type(faker.internet.password(8))
+    cy.get('[data-qa="signup-submit-button"]').click()
+    cy.url().then(actualUrl => {
+      expect(actualUrl).to.include('/register')
+    })
+  })
+  it('remplissage du formulaire sans le nom et soumission', () => {
+    cy.get('[data-qa="accept-cta"]').click()
+    cy.get('#firstName').type(faker.name.firstName())
+    cy.get('#signup-email').type(faker.name.fullName())
+    cy.get('#signup-password').type(faker.internet.password(8))
+    cy.get('[data-qa="signup-submit-button"]').click()
+    cy.url().then(actualUrl => {
+      expect(actualUrl).to.include('/register')
+    })
   })
 })
