@@ -1,6 +1,8 @@
 /// <reference types="cypress" />
 
 import { faker } from '@faker-js/faker'
+const registeredEmail = faker.internet.email()
+const registerdPassword = faker.internet.password(15, false, /[a-zA-Z0-9]/)
 
 describe('inscription réussie', () => {
   beforeEach(() => {
@@ -11,10 +13,8 @@ describe('inscription réussie', () => {
     cy.get('[data-qa="accept-cta"]').click()
     cy.get('#firstName').type(faker.name.firstName())
     cy.get('#lastName').type(faker.name.lastName())
-    cy.get('#signup-email').type(faker.internet.email())
-    cy.get('#signup-password').type(
-      faker.internet.password(8, false, /[a-zA-Z0-9]/)
-    )
+    cy.get('#signup-email').type(registeredEmail)
+    cy.get('#signup-password').type(registerdPassword)
     cy.get('[data-qa="signup-submit-button"]').click()
     cy.wait(5000)
     cy.url().then(actualUrl => {
@@ -70,6 +70,16 @@ describe('inscription échouée', () => {
     cy.get('[data-qa="signup-submit-button"]').click()
     cy.url().then(actualUrl => {
       expect(actualUrl).to.include('/register')
+    })
+  })
+  it('authentification réussie avec derniers identifiants corrects', () => {
+    cy.get('[data-qa="accept-cta"]').click()
+    cy.get('#signin-email').type(registeredEmail)
+    cy.get('#signin-password').type(registerdPassword)
+    cy.get('[data-qa="signin-submit-button"]').click()
+    cy.wait(5000)
+    cy.url().then(actualUrl => {
+      expect(actualUrl).to.include('/dashboard')
     })
   })
 })
