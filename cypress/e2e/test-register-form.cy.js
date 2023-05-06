@@ -72,6 +72,12 @@ describe('inscription échouée', () => {
       expect(actualUrl).to.include('/register')
     })
   })
+})
+describe('Authentification', () => {
+  beforeEach(() => {
+    cy.clearCookies()
+    cy.visit('https://preprod.backmarket.fr/fr-fr/register')
+  })
   it('authentification réussie avec derniers identifiants corrects', () => {
     cy.get('[data-qa="accept-cta"]').click()
     cy.get('#signin-email').type(registeredEmail)
